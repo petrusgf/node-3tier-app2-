@@ -18,12 +18,10 @@ ENV PORT=4000
 
 WORKDIR /app
 
-RUN addgroup -g 1000 appgroup && adduser -u 1000 -G appgroup -s /bin/sh -D appuser
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --chown=node:node api/ .
 
-COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
-COPY --chown=appuser:appgroup api/ .
-
-USER appuser
+USER node
 
 EXPOSE 4000
 
