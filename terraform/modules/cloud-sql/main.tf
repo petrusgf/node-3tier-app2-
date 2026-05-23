@@ -125,6 +125,20 @@ resource "google_secret_manager_secret_version" "db_connection_string" {
   secret_data = "postgresql://${var.db_user}:${random_password.db_password.result}@${google_sql_database_instance.main.private_ip_address}:5432/${var.db_name}?sslmode=require"
 }
 
+resource "google_secret_manager_secret" "db_host" {
+  secret_id = "${var.prefix}-db-host"
+  project   = var.project_id
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "db_host" {
+  secret      = google_secret_manager_secret.db_host.id
+  secret_data = google_sql_database_instance.main.private_ip_address
+}
+
 # Service account for backup scheduler job
 resource "google_service_account" "backup_sa" {
   account_id   = "${var.prefix}-db-backup"

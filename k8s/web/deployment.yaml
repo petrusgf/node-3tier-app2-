@@ -43,8 +43,10 @@ spec:
             - configMapRef:
                 name: app-config
           env:
-            - name: API_URL
-              value: "http://api-service.prod.svc.cluster.local:4000"
+            - name: API_HOST
+              value: "http://api-service.prod.svc.cluster.local"
+            - name: PORT
+              value: "3000"
           resources:
             requests:
               cpu: "100m"

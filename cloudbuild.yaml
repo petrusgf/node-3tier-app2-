@@ -77,24 +77,20 @@ steps:
         set -euo pipefail
 
         gcloud container clusters get-credentials ${_CLUSTER} \
-          --region ${_REGION} --project ${PROJECT_ID}
+          --location ${_REGION} --project ${PROJECT_ID}
 
         # Base resources (namespace, configmap, service accounts)
         kubectl apply -f k8s/base/
 
         # Fetch DB credentials from Secret Manager → k8s secret
-        DB_CONN=$(gcloud secrets versions access latest \
-          --secret="app-prod-db-connection-string" --project="${PROJECT_ID}")
         DB_PASS=$(gcloud secrets versions access latest \
           --secret="app-prod-db-password" --project="${PROJECT_ID}")
         DB_HOST=$(gcloud secrets versions access latest \
           --secret="app-prod-db-host" --project="${PROJECT_ID}")
 
         kubectl create secret generic db-credentials -n prod \
-          --from-literal=connection-string="$DB_CONN" \
           --from-literal=password="$DB_PASS" \
           --from-literal=host="$DB_HOST" \
-          --from-literal=user="appuser" \
           --save-config --dry-run=client -o yaml | kubectl apply -f -
 
         # BackendConfigs (CDN config)

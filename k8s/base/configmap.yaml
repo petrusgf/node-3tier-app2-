@@ -5,7 +5,7 @@ metadata:
   namespace: prod
 data:
   NODE_ENV: "production"
-  PORT: "3000"
-  API_PORT: "4000"
   LOG_LEVEL: "info"
-  # DB connection string is injected via Secret (from Secret Manager)
+  DBUSER: "appuser"
+  DB: "appdb"
+  DBPORT: "5432"

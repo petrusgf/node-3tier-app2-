@@ -33,23 +33,6 @@ spec:
             matchLabels:
               app: api
       terminationGracePeriodSeconds: 60
-      initContainers:
-        - name: db-migrate
-          image: REGISTRY_URL/api:IMAGE_TAG
-          command: ["npm", "run", "migrate"]
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: connection-string
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "200m"
-              memory: "256Mi"
       containers:
         - name: api
           image: REGISTRY_URL/api:IMAGE_TAG
@@ -60,21 +43,18 @@ spec:
             - configMapRef:
                 name: app-config
           env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: connection-string
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: host
-            - name: DB_PASSWORD
+            - name: PORT
+              value: "4000"
+            - name: DBPASS
               valueFrom:
                 secretKeyRef:
                   name: db-credentials
                   key: password
+            - name: DBHOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: host
           resources:
             requests:
               cpu: "200m"
@@ -104,6 +84,5 @@ spec:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 1000
-            readOnlyRootFilesystem: true
       securityContext:
         fsGroup: 1000
