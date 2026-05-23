@@ -2,7 +2,7 @@
 
 ## Overview
 
-A production-grade continuous delivery architecture for a Node.js 3-tier application hosted on Google Cloud Platform. All infrastructure is managed via Terraform, deployments are fully automated via GitLab CI, and the system is designed for zero-downtime updates, automatic failure recovery, and observability.
+A production-grade continuous delivery architecture for a Node.js 3-tier application hosted on Google Cloud Platform. All infrastructure is managed via Terraform, deployments are fully automated via Google Cloud Build, and the system is designed for zero-downtime updates, automatic failure recovery, and observability.
 
 ---
 
@@ -83,8 +83,7 @@ A production-grade continuous delivery architecture for a Node.js 3-tier applica
 - **Runtime**: Node.js / Express REST API
 - **Deployment**: GKE `Deployment` in `prod` namespace, separate from web
 - **Scaling**: HPA (2–10 pods), CPU threshold 60%, multi-zone spread
-- **DB migrations**: Run as an `initContainer` before the main container starts — migrations are idempotent and run on every deployment
-- **Secrets**: DB connection string injected from Kubernetes Secret, populated from GCP Secret Manager during CI deploy step
+- **Secrets**: DB credentials (`DBHOST`, `DBPASS`) injected from a Kubernetes Secret, populated from GCP Secret Manager during the Cloud Build deploy step
 - **CDN**: Disabled — responses are dynamic
 
 ### DB Tier
@@ -114,32 +113,38 @@ Firewall:
 
 ---
 
-## CI/CD Pipeline (GitLab CI)
+## CI/CD Pipeline (Google Cloud Build)
 
 ```
-Trigger: push to main branch or tag
+Trigger: push to main branch of GitHub repo (petrusgf/node-3tier-app2-)
+         → Cloud Build trigger (2nd gen, GitHub App connection)
 
-Stage 1 — test (parallel):
-  ├── test:web  → npm lint + npm test (with coverage)
-  └── test:api  → npm lint + npm test (with real Postgres service container)
+Step 1 — test (parallel):
+  ├── test-web  → npm install && npm test  (jest + supertest)
+  └── test-api  → npm install && npm test  (jest + supertest)
 
-Stage 2 — build (parallel, only on main/tag):
-  ├── build:web → docker build → push to Artifact Registry (web:SHA, web:latest)
-  └── build:api → docker build → push to Artifact Registry (api:SHA, api:latest)
+Step 2 — build (parallel, after tests pass):
+  ├── build-web → docker build → tag :COMMIT_SHA + :latest
+  └── build-api → docker build → tag :COMMIT_SHA + :latest
+                  (--cache-from :latest for faster builds)
 
-Stage 3 — deploy (sequential, only on main):
-  └── deploy:prod
-        ├── kubectl apply base resources
-        ├── Fetch DB credentials from Secret Manager → create k8s Secret
-        ├── Apply BackendConfig (CDN config)
-        ├── Apply Ingress + ManagedCertificates (domain-patched)
-        ├── Apply Deployments (image-tag-patched)
-        ├── Apply HPA + PDB
-        ├── kubectl rollout status (waits for both to complete)
-        └── health-check.sh (smoke test against live endpoints)
+Step 3 — push:
+  ├── push-web  → Artifact Registry (us-central1-docker.pkg.dev/…/web)
+  └── push-api  → Artifact Registry (us-central1-docker.pkg.dev/…/api)
 
-Auth: Workload Identity Federation — GitLab JWT → GCP short-lived token
-      No service account keys stored anywhere.
+Step 4 — deploy (after both images pushed):
+  ├── gcloud container clusters get-credentials (--location, works zonal+regional)
+  ├── kubectl apply k8s/base/ (namespace, configmap, service accounts)
+  ├── Fetch DB credentials from Secret Manager → kubectl create secret db-credentials
+  ├── kubectl apply BackendConfig, Ingress, Deployments (image tag substituted)
+  ├── kubectl apply Services, HPA, PDB
+  └── kubectl rollout status (waits up to 5 min for both web + api)
+
+Step 5 — health-check:
+  └── scripts/health-check.sh (smoke test against live web + api domains)
+
+Auth: Compute Engine default SA with roles:
+      artifactregistry.writer, container.developer, secretmanager.secretAccessor
 ```
 
 ---
@@ -228,10 +233,9 @@ Manual restore: `./scripts/restore.sh --backup gs://BUCKET/path/backup.sql.gz --
 - Cloud SQL is **private IP only** — no public endpoint
 - Workload Identity: pods authenticate as GCP service accounts without keys
 - Managed TLS certificates on the load balancer
-- `readOnlyRootFilesystem: true` on all containers
 - Non-root container users (UID 1000)
 - Secrets stored in **Secret Manager**, not in git or environment variables
-- GitLab CI uses **Workload Identity Federation** — no long-lived service account keys
+- Cloud Build runs as Compute Engine default SA — no long-lived keys stored in source control
 
 ---
 
@@ -262,19 +266,32 @@ terraform/
     ├── gke/             # GKE cluster, node pools, Workload Identity bindings
     ├── cloud-sql/       # PostgreSQL HA instance, Secret Manager secrets
     ├── cdn/             # Cloud CDN, static assets bucket, backup bucket
-    ├── artifact-registry/ # Docker registry, WIF pool for GitLab CI
+    ├── artifact-registry/ # Docker registry, Cloud Build IAM grants
     └── monitoring/      # Dashboards, alert policies, uptime checks
 ```
+
+### Git repository strategy
+
+This project uses **two git remotes**:
+
+| Remote | Purpose |
+|---|---|
+| **GitHub** (`petrusgf/node-3tier-app2-`) | CI/CD trigger source — Cloud Build webhook connects here because Toptal GitLab has no pipeline runner or webhook support |
+| **Toptal GitLab** (`git.toptal.com/screening-ops/Petrus-gomes-de-figueiredo-e-silva`) | Submission repository — all code including `cloudbuild.yaml`, Terraform, K8s manifests, and scripts is committed here per task requirements |
+
+This satisfies the requirement: *"You can use another git provider to leverage hooks, CI/CD or other features not enabled in Toptal's git. Everything else, including the code for the CI/CD pipeline, must be pushed to Toptal's git."*
 
 ### Bootstrap steps
 
 ```bash
 # 1. Create a GCS bucket for Terraform state (one-time, before terraform init)
-gsutil mb -p YOUR_PROJECT_ID gs://YOUR_TF_STATE_BUCKET
+gsutil mb -p YOUR_PROJECT_ID gs://YOUR_PROJECT_ID-tfstate
 
-# 2. Update terraform/backend.tf with bucket name
+# 2. Update terraform/backend.tf with the bucket name
+
 # 3. Copy and fill in your tfvars
 cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+# Edit terraform.tfvars: set project_id, region, domains, etc.
 
 # 4. Initialise and apply
 cd terraform
@@ -284,25 +301,43 @@ terraform apply tfplan
 
 # 5. Configure kubectl
 gcloud container clusters get-credentials app-prod-cluster \
-  --region us-central1 --project YOUR_PROJECT_ID
+  --location us-central1 --project YOUR_PROJECT_ID
 
 # 6. Apply Kubernetes base resources
 kubectl apply -f k8s/base/
 
-# 7. Set GitLab CI/CD variables (see below)
+# 7. Connect GitHub to Cloud Build (one-time, in GCP Console):
+#    Cloud Build → Repositories → Create host connection → GitHub
+#    Authorise the Cloud Build GitHub App, then link your repository.
+
+# 8. Create the Cloud Build trigger
+gcloud builds repositories create YOUR_GITHUB_REPO \
+  --remote-uri=https://github.com/YOUR_GITHUB_ORG/YOUR_GITHUB_REPO.git \
+  --connection=github-connection \
+  --region=YOUR_REGION \
+  --project=YOUR_PROJECT_ID
+
+gcloud builds triggers create github \
+  --name=app-prod-deploy \
+  --repository=projects/YOUR_PROJECT_ID/locations/YOUR_REGION/connections/github-connection/repositories/YOUR_GITHUB_REPO \
+  --branch-pattern="^main$" \
+  --build-config=cloudbuild.yaml \
+  --region=YOUR_REGION \
+  --project=YOUR_PROJECT_ID
+
+# 9. Push to main — Cloud Build will test, build, and deploy automatically
+git push origin main
 ```
 
-### GitLab CI variables to set
+### Cloud Build substitution defaults (cloudbuild.yaml)
 
-| Variable | Value | Protected |
+| Substitution | Default | Override at trigger if needed |
 |---|---|---|
-| `GCP_PROJECT_ID` | Your GCP project ID | Yes |
-| `GCP_WIF_PROVIDER` | WIF provider resource name (from `terraform output`) | Yes |
-| `GCP_CI_SA_EMAIL` | CI service account email (from `terraform output`) | Yes |
-| `WEB_DOMAIN` | e.g. `app.example.com` | No |
-| `API_DOMAIN` | e.g. `api.example.com` | No |
-| `WEB_WORKLOAD_SA_EMAIL` | Web workload SA (from `terraform output`) | Yes |
-| `API_WORKLOAD_SA_EMAIL` | API workload SA (from `terraform output`) | Yes |
+| `_REGION` | `us-central1` | Yes |
+| `_CLUSTER` | `app-prod-cluster` | Yes |
+| `_REGISTRY` | `us-central1-docker.pkg.dev/${PROJECT_ID}/app-prod-app` | Yes |
+| `_WEB_DOMAIN` | `web.example.com` | Yes — set to your real domain |
+| `_API_DOMAIN` | `api.example.com` | Yes — set to your real domain |
 
 ---
 
