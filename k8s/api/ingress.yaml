@@ -5,12 +5,11 @@ metadata:
   namespace: prod
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "app-prod-api-ip"
+    kubernetes.io/ingress.global-static-ip-name: "app-prod-web-ip"
     networking.gke.io/managed-certificates: "api-managed-cert"
-    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: API_DOMAIN   # replaced per environment
+    - host: API_DOMAIN
       http:
         paths:
           - path: /
@@ -28,4 +27,4 @@ metadata:
   namespace: prod
 spec:
   domains:
-    - API_DOMAIN   # replaced per environment
+    - API_DOMAIN

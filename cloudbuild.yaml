@@ -3,8 +3,8 @@ substitutions:
   _CLUSTER_LOCATION: us-central1-a
   _CLUSTER: app-prod-cluster
   _REGISTRY: us-central1-docker.pkg.dev/${PROJECT_ID}/app-prod-app
-  _WEB_DOMAIN: web.example.com
-  _API_DOMAIN: api.example.com
+  _WEB_DOMAIN: web.aiforu2.com
+  _API_DOMAIN: api.aiforu2.com
 
 steps:
   # ── Tests (run in parallel) ─────────────────────────────────────────────
@@ -140,8 +140,8 @@ steps:
       - |
         bash scripts/health-check.sh
     env:
-      - WEB_URL=https://${_WEB_DOMAIN}
-      - API_URL=https://${_API_DOMAIN}
+      - WEB_URL=http://${_WEB_DOMAIN}
+      - API_URL=http://${_API_DOMAIN}
     waitFor: [deploy]
 
 images:

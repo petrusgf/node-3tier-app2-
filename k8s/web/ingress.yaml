@@ -7,10 +7,9 @@ metadata:
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.global-static-ip-name: "app-prod-web-ip"
     networking.gke.io/managed-certificates: "web-managed-cert"
-    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: WEB_DOMAIN   # replaced per environment
+    - host: WEB_DOMAIN
       http:
         paths:
           - path: /
@@ -28,4 +27,4 @@ metadata:
   namespace: prod
 spec:
   domains:
-    - WEB_DOMAIN   # replaced per environment
+    - WEB_DOMAIN
