@@ -89,14 +89,14 @@ steps:
         kubectl apply -f k8s/base/
 
         # Fetch DB credentials from Secret Manager → k8s secret
-        DB_PASS=$(gcloud secrets versions access latest \
+        DB_PASS=$$(gcloud secrets versions access latest \
           --secret="app-prod-db-password" --project="${PROJECT_ID}")
-        DB_HOST=$(gcloud secrets versions access latest \
+        DB_HOST=$$(gcloud secrets versions access latest \
           --secret="app-prod-db-host" --project="${PROJECT_ID}")
 
         kubectl create secret generic db-credentials -n prod \
-          --from-literal=password="$DB_PASS" \
-          --from-literal=host="$DB_HOST" \
+          --from-literal=password="$$DB_PASS" \
+          --from-literal=host="$$DB_HOST" \
           --save-config --dry-run=client -o yaml | kubectl apply -f -
 
         # BackendConfigs (CDN config)
