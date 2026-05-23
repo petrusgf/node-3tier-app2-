@@ -59,12 +59,18 @@ steps:
   # ── Push images ──────────────────────────────────────────────────────────
   - name: gcr.io/cloud-builders/docker
     id: push-api
-    args: [push, --all-tags, ${_REGISTRY}/api]
+    args:
+      - push
+      - --all-tags
+      - ${_REGISTRY}/api
     waitFor: [build-api]
 
   - name: gcr.io/cloud-builders/docker
     id: push-web
-    args: [push, --all-tags, ${_REGISTRY}/web]
+    args:
+      - push
+      - --all-tags
+      - ${_REGISTRY}/web
     waitFor: [build-web]
 
   # ── Deploy to GKE ────────────────────────────────────────────────────────
