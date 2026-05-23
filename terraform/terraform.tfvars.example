@@ -1,0 +1,14 @@
+project_id               = "your-gcp-project-id"
+region                   = "us-central1"
+environment              = "prod"
+prefix                   = "app"
+web_domain               = "app.example.com"
+api_domain               = "api.example.com"
+gke_machine_type         = "e2-standard-4"
+gke_min_node_count       = 1
+gke_max_node_count       = 5
+db_tier                  = "db-n1-standard-2"
+db_name                  = "appdb"
+db_user                  = "appuser"
+backup_bucket_location   = "US"
+alert_notification_email = "ops@example.com"

@@ -1,0 +1,22 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: web-backend-config
+  namespace: prod
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
+  healthCheck:
+    checkIntervalSec: 15
+    port: 3000
+    type: HTTP
+    requestPath: /health
+  connectionDraining:
+    drainingTimeoutSec: 30
+  sessionAffinity:
+    affinityType: "NONE"
+  timeoutSec: 30
