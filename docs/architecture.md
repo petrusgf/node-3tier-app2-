@@ -60,10 +60,10 @@ A production-grade continuous delivery architecture for a Node.js 3-tier applica
                          └────────────────────┘
 
   ┌──────────────────────────────────────────────────────────────────────┐
-  │  GitLab CI/CD Pipeline                                               │
+  │  Google Cloud Build Pipeline (triggered from GitHub)                 │
   │                                                                      │
   │  main branch: test → build (web + api) → deploy to prod             │
-  │  Auth: Workload Identity Federation (no stored keys)                 │
+  │  Auth: Compute Engine SA (artifactregistry.writer, container.dev)   │
   └──────────────────────────────────────────────────────────────────────┘
 ```
 
