@@ -106,9 +106,13 @@ steps:
         kubectl apply -f k8s/web/backendconfig.yaml
         kubectl apply -f k8s/api/backendconfig.yaml
 
-        # Ingress with real domains substituted
-        sed "s|WEB_DOMAIN|${_WEB_DOMAIN}|g" k8s/web/ingress.yaml | kubectl apply -f -
-        sed "s|API_DOMAIN|${_API_DOMAIN}|g" k8s/api/ingress.yaml | kubectl apply -f -
+        # Delete old separate ingresses if they exist
+        kubectl delete ingress web-ingress api-ingress -n prod --ignore-not-found
+
+        # Single ingress with both host rules and real domains substituted
+        sed -e "s|WEB_DOMAIN|${_WEB_DOMAIN}|g" \
+            -e "s|API_DOMAIN|${_API_DOMAIN}|g" \
+            k8s/base/ingress.yaml | kubectl apply -f -
 
         # Deployments with real image tags
         sed -e "s|REGISTRY_URL|${_REGISTRY}|g" \
