@@ -144,8 +144,8 @@ steps:
       - |
         bash scripts/health-check.sh
     env:
-      - WEB_URL=http://${_WEB_DOMAIN}
-      - API_URL=http://${_API_DOMAIN}
+      - WEB_URL=https://${_WEB_DOMAIN}
+      - API_URL=https://${_API_DOMAIN}
     waitFor: [deploy]
 
 images:
