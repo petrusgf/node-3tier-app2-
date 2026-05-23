@@ -86,8 +86,10 @@ steps:
         gcloud container clusters get-credentials ${_CLUSTER} \
           --location ${_CLUSTER_LOCATION} --project ${PROJECT_ID}
 
-        # Base resources (namespace, configmap, service accounts)
-        kubectl apply -f k8s/base/
+        # Base resources — namespace must be first
+        kubectl apply -f k8s/base/namespace.yaml
+        kubectl apply -f k8s/base/configmap.yaml
+        kubectl apply -f k8s/base/serviceaccounts.yaml
 
         # Fetch DB credentials from Secret Manager → k8s secret
         DB_PASS=$$(gcloud secrets versions access latest \
