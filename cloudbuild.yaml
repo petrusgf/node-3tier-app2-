@@ -1,5 +1,6 @@
 substitutions:
   _REGION: us-central1
+  _CLUSTER_LOCATION: us-central1-a
   _CLUSTER: app-prod-cluster
   _REGISTRY: us-central1-docker.pkg.dev/${PROJECT_ID}/app-prod-app
   _WEB_DOMAIN: web.example.com
@@ -83,7 +84,7 @@ steps:
         set -euo pipefail
 
         gcloud container clusters get-credentials ${_CLUSTER} \
-          --location ${_REGION} --project ${PROJECT_ID}
+          --location ${_CLUSTER_LOCATION} --project ${PROJECT_ID}
 
         # Base resources (namespace, configmap, service accounts)
         kubectl apply -f k8s/base/
