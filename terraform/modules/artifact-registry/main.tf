@@ -11,12 +11,22 @@ resource "google_artifact_registry_repository" "app" {
   }
 }
 
-# Grant the Cloud Build default SA permission to push images
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
+locals {
+  # Cloud Build trigger is configured to run as the Compute Engine default SA.
+  # Format: PROJECT_NUMBER-compute@developer.gserviceaccount.com
+  cloudbuild_sa = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+# Allow Cloud Build SA to push images to Artifact Registry
 resource "google_artifact_registry_repository_iam_member" "cloudbuild_writer" {
   location   = google_artifact_registry_repository.app.location
   repository = google_artifact_registry_repository.app.name
   role       = "roles/artifactregistry.writer"
-  member     = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  member     = local.cloudbuild_sa
   project    = var.project_id
 }
 
@@ -24,16 +34,12 @@ resource "google_artifact_registry_repository_iam_member" "cloudbuild_writer" {
 resource "google_project_iam_member" "cloudbuild_gke" {
   project = var.project_id
   role    = "roles/container.developer"
-  member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  member  = local.cloudbuild_sa
 }
 
-# Allow Cloud Build SA to read secrets (DB credentials)
+# Allow Cloud Build SA to read secrets (DB credentials at deploy time)
 resource "google_project_iam_member" "cloudbuild_secrets" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
-}
-
-data "google_project" "project" {
-  project_id = var.project_id
+  member  = local.cloudbuild_sa
 }

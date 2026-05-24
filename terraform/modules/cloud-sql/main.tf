@@ -146,9 +146,9 @@ resource "google_service_account" "backup_sa" {
   project      = var.project_id
 }
 
-resource "google_project_iam_member" "backup_sa_sql_admin" {
+resource "google_project_iam_member" "backup_sa_sql_editor" {
   project = var.project_id
-  role    = "roles/cloudsql.admin"
+  role    = "roles/cloudsql.editor"
   member  = "serviceAccount:${google_service_account.backup_sa.email}"
 }
 
