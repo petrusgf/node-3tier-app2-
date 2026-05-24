@@ -5,7 +5,7 @@ prefix                   = "app"
 web_domain               = "web.aiforu2.com"
 api_domain               = "api.aiforu2.com"
 alert_notification_email = "toptalinterviewps@gmail.com"
-github_owner             = "REPLACE_WITH_YOUR_GITHUB_USERNAME"
+github_owner             = "petrusgf"
 github_repo              = "node-3tier-app2"
 backup_bucket_location   = "US"
 
