@@ -1,7 +1,15 @@
-<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
   <root>
     <mxCell id="0" />
     <mxCell id="1" parent="0" />
+
+    <!-- ═══ VPC BACKGROUND BAND ═══ -->
+    <mxCell id="vpc_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeDasharray=6 4;opacity=30;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="70" y="315" width="980" height="360" as="geometry" />
+    </mxCell>
+    <mxCell id="vpc_label" value="VPC 10.0.0.0/8 · GKE Subnet 10.1.0.0/20 · Pod CIDR 10.2.0.0/16 · Cloud NAT (private nodes → internet)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;strokeColor=#6c8ebf;" vertex="1" parent="1">
+      <mxGeometry x="70" y="318" width="980" height="18" as="geometry" />
+    </mxCell>
 
     <!-- ═══ INTERNET ═══ -->
     <mxCell id="internet" value="&lt;b&gt;Internet (Users)&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
@@ -20,12 +28,12 @@
 
     <!-- ═══ WEB TIER ═══ -->
     <mxCell id="web" value="&lt;b&gt;WEB TIER&lt;/b&gt;&lt;br&gt;GKE Deployment · prod namespace&lt;br&gt;min 2 pods · max 10 pods&lt;br&gt;HPA: CPU 60% · CDN enabled&lt;br&gt;maxUnavailable: 0 · PDB min 1&lt;br&gt;Multi-zone topology spread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="100" y="340" width="280" height="120" as="geometry" />
+      <mxGeometry x="100" y="345" width="280" height="120" as="geometry" />
     </mxCell>
 
     <!-- ═══ API TIER ═══ -->
     <mxCell id="api" value="&lt;b&gt;API TIER&lt;/b&gt;&lt;br&gt;GKE Deployment · prod namespace&lt;br&gt;min 2 pods · max 10 pods&lt;br&gt;HPA: CPU 60% · CDN disabled&lt;br&gt;maxUnavailable: 0 · PDB min 1&lt;br&gt;Workload Identity (no keys in pods)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="720" y="340" width="280" height="120" as="geometry" />
+      <mxGeometry x="720" y="345" width="280" height="120" as="geometry" />
     </mxCell>
 
     <!-- ═══ DB TIER ═══ -->
@@ -40,37 +48,37 @@
 
     <!-- ═══ SUPPORTING SERVICES HEADER ═══ -->
     <mxCell id="sup_label" value="&lt;b&gt;SUPPORTING SERVICES&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-      <mxGeometry x="100" y="680" width="900" height="25" as="geometry" />
+      <mxGeometry x="80" y="692" width="1230" height="25" as="geometry" />
+    </mxCell>
+
+    <!-- Terraform IaC -->
+    <mxCell id="terraform" value="&lt;b&gt;Terraform (IaC)&lt;/b&gt;&lt;br&gt;6 modules: vpc · gke&lt;br&gt;cloud-sql · cdn&lt;br&gt;artifact-registry · monitoring&lt;br&gt;GCS remote state" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="80" y="725" width="175" height="100" as="geometry" />
     </mxCell>
 
     <!-- GCS Buckets -->
     <mxCell id="gcs" value="&lt;b&gt;GCS Buckets&lt;/b&gt;&lt;br&gt;static-assets (CDN backend)&lt;br&gt;backups (90-day TTL)&lt;br&gt;Versioning enabled" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="100" y="715" width="190" height="90" as="geometry" />
+      <mxGeometry x="273" y="725" width="175" height="100" as="geometry" />
     </mxCell>
 
     <!-- Cloud Monitoring -->
     <mxCell id="monitoring" value="&lt;b&gt;Cloud Monitoring&lt;/b&gt;&lt;br&gt;Dashboard: pod CPU/mem&lt;br&gt;5 alert policies&lt;br&gt;Uptime checks /health (60s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="315" y="715" width="210" height="90" as="geometry" />
+      <mxGeometry x="466" y="725" width="175" height="100" as="geometry" />
     </mxCell>
 
     <!-- Cloud Logging -->
-    <mxCell id="logging" value="&lt;b&gt;Cloud Logging&lt;/b&gt;&lt;br&gt;k8s_container logs&lt;br&gt;VPC flow logs&lt;br&gt;Cloud SQL query logs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="545" y="715" width="190" height="90" as="geometry" />
+    <mxCell id="logging" value="&lt;b&gt;Cloud Logging&lt;/b&gt;&lt;br&gt;stdout → Fluent Bit → Cloud&lt;br&gt;VPC flow logs&lt;br&gt;Cloud SQL query logs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="659" y="725" width="175" height="100" as="geometry" />
     </mxCell>
 
     <!-- Artifact Registry -->
     <mxCell id="registry" value="&lt;b&gt;Artifact Registry&lt;/b&gt;&lt;br&gt;web:COMMIT_SHA&lt;br&gt;api:COMMIT_SHA&lt;br&gt;web:latest · api:latest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="755" y="715" width="190" height="90" as="geometry" />
+      <mxGeometry x="852" y="725" width="175" height="100" as="geometry" />
     </mxCell>
 
     <!-- Cloud Build -->
     <mxCell id="cloudbuild" value="&lt;b&gt;Google Cloud Build&lt;/b&gt;&lt;br&gt;GitHub push → main trigger&lt;br&gt;test → build → push&lt;br&gt;→ deploy → health-check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-      <mxGeometry x="965" y="715" width="190" height="90" as="geometry" />
-    </mxCell>
-
-    <!-- ═══ NETWORK LABEL ═══ -->
-    <mxCell id="vpc_label" value="VPC 10.0.0.0/8 · GKE Subnet 10.1.0.0/20 · Pod CIDR 10.2.0.0/16 · Cloud NAT (private nodes → internet)" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;align=center;verticalAlign=middle;fontSize=10;rounded=1;" vertex="1" parent="1">
-      <mxGeometry x="330" y="490" width="310" height="30" as="geometry" />
+      <mxGeometry x="1045" y="725" width="195" height="100" as="geometry" />
     </mxCell>
 
     <!-- ══════════ EDGES ══════════ -->
@@ -95,8 +103,18 @@
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
+    <!-- Web → API (internal cluster DNS) — FIX #1 -->
+    <mxCell id="e_web_api" value="internal cluster DNS" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#82b366;" edge="1" source="web" target="api" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
     <!-- API → DB -->
     <mxCell id="e5" value="Private VPC" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;" edge="1" source="api" target="db" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- DB → GCS (daily backup export) — FIX #2 -->
+    <mxCell id="e_db_gcs" value="daily export&lt;br&gt;(Cloud Scheduler)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#d79b00;" edge="1" source="db" target="gcs" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
@@ -105,8 +123,13 @@
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- Cloud Build → GKE (via LB area — conceptual) -->
-    <mxCell id="e7" value="kubectl deploy" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;" edge="1" source="cloudbuild" target="api" parent="1">
+    <!-- Cloud Build → Web (kubectl deploy) — FIX #3 -->
+    <mxCell id="e7" value="kubectl deploy" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;" edge="1" source="cloudbuild" target="web" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Cloud Build → API (kubectl deploy) — FIX #3 -->
+    <mxCell id="e7b" value="kubectl deploy" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;" edge="1" source="cloudbuild" target="api" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
@@ -115,8 +138,13 @@
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- Secret Manager → API (injects at deploy) -->
-    <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9673a6;" edge="1" source="secrets" target="api" parent="1">
+    <!-- Secret Manager → API (injects db-credentials at deploy time) — FIX #4 -->
+    <mxCell id="e9" value="injects db-credentials&lt;br&gt;(deploy time)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#9673a6;" edge="1" source="secrets" target="api" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Terraform → GCP infra (provisions everything) — FIX #5 -->
+    <mxCell id="e_tf" value="provisions all GCP resources" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#6c8ebf;" edge="1" source="terraform" target="vpc_bg" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
