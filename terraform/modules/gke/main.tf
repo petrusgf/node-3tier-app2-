@@ -6,10 +6,7 @@ resource "google_service_account" "gke_nodes" {
 
 locals {
   node_sa_roles = [
-    "roles/logging.logWriter",
-    "roles/monitoring.metricWriter",
-    "roles/monitoring.viewer",
-    "roles/stackdriver.resourceMetadata.writer",
+    "roles/container.defaultNodeServiceAccount",
     "roles/artifactregistry.reader",
   ]
 }
