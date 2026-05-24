@@ -114,7 +114,7 @@
     </mxCell>
 
     <!-- DB → GCS (daily backup export) — FIX #2 -->
-    <mxCell id="e_db_gcs" value="daily export&lt;br&gt;(Cloud Scheduler)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#d79b00;" edge="1" source="db" target="gcs" parent="1">
+    <mxCell id="e_db_gcs" value="daily export (Cloud Scheduler)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#d79b00;" edge="1" source="db" target="gcs" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
@@ -139,7 +139,7 @@
     </mxCell>
 
     <!-- Secret Manager → API (injects db-credentials at deploy time) — FIX #4 -->
-    <mxCell id="e9" value="injects db-credentials&lt;br&gt;(deploy time)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#9673a6;" edge="1" source="secrets" target="api" parent="1">
+    <mxCell id="e9" value="injects db-credentials (deploy time)" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;dashed=1;strokeColor=#9673a6;" edge="1" source="secrets" target="api" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
