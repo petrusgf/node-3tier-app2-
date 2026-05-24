@@ -42,10 +42,11 @@ resource "google_container_cluster" "main" {
   }
 
   master_authorized_networks_config {
-    # Restrict to your CI/CD runner IPs and ops IPs in production
+    # Cloud Build uses dynamic Google IPs — restrict to your corp/VPN CIDR in production
+    # by overriding var.master_authorized_cidr
     cidr_blocks {
-      cidr_block   = "0.0.0.0/0"
-      display_name = "public-access"
+      cidr_block   = var.master_authorized_cidr
+      display_name = "authorized-access"
     }
   }
 

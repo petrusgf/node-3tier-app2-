@@ -13,3 +13,9 @@ variable "location" {
   type        = string
   default     = ""
 }
+
+variable "master_authorized_cidr" {
+  description = "CIDR allowed to reach the GKE API server. Defaults to 0.0.0.0/0 for Cloud Build compatibility (Cloud Build IPs are dynamic). Restrict to your corp/VPN CIDR in production."
+  type        = string
+  default     = "0.0.0.0/0"
+}

@@ -5,7 +5,7 @@
 set -euo pipefail
 
 PROJECT_ID="${GCP_PROJECT_ID:-$(gcloud config get-value project)}"
-REGION="${GCP_REGION:-us-central1}"
+CLUSTER_LOCATION="${CLUSTER_LOCATION:-us-central1-a}"
 CLUSTER_NAME="${CLUSTER_NAME:-app-prod-cluster}"
 REGISTRY="${GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/app-prod-app"
 NAMESPACE="prod"
@@ -23,7 +23,7 @@ done
 [[ -n "${TAG}" ]] || { echo "Usage: rolling-deploy.sh --tag <image-tag> [--tier web|api|all]"; exit 1; }
 
 gcloud container clusters get-credentials "${CLUSTER_NAME}" \
-  --region "${REGION}" --project "${PROJECT_ID}"
+  --location "${CLUSTER_LOCATION}" --project "${PROJECT_ID}"
 
 deploy_tier() {
   local tier="$1"

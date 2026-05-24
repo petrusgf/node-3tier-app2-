@@ -89,7 +89,12 @@ steps:
         # Base resources — namespace must be first
         kubectl apply -f k8s/base/namespace.yaml
         kubectl apply -f k8s/base/configmap.yaml
-        kubectl apply -f k8s/base/serviceaccounts.yaml
+        kubectl apply -f k8s/base/networkpolicy.yaml
+
+        # ServiceAccounts with Workload Identity SA emails substituted
+        sed -e "s|WEB_WORKLOAD_SA_EMAIL|app-prod-web@${PROJECT_ID}.iam.gserviceaccount.com|g" \
+            -e "s|API_WORKLOAD_SA_EMAIL|app-prod-api@${PROJECT_ID}.iam.gserviceaccount.com|g" \
+            k8s/base/serviceaccounts.yaml | kubectl apply -f -
 
         # Fetch DB credentials from Secret Manager → k8s secret
         DB_PASS=$$(gcloud secrets versions access latest \

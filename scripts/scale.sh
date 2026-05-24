@@ -9,7 +9,7 @@
 set -euo pipefail
 
 PROJECT_ID="${GCP_PROJECT_ID:-$(gcloud config get-value project)}"
-REGION="${GCP_REGION:-us-central1}"
+CLUSTER_LOCATION="${CLUSTER_LOCATION:-us-central1-a}"
 CLUSTER_NAME="${CLUSTER_NAME:-app-prod-cluster}"
 NAMESPACE="prod"
 
@@ -29,7 +29,7 @@ case "${command}" in
     done
     [[ -n "${TIER}" && -n "${REPLICAS}" ]] || { echo "Usage: scale.sh pods --tier <web|api> --replicas N"; exit 1; }
     gcloud container clusters get-credentials "${CLUSTER_NAME}" \
-      --region "${REGION}" --project "${PROJECT_ID}" 2>/dev/null
+      --location "${CLUSTER_LOCATION}" --project "${PROJECT_ID}" 2>/dev/null
     echo "Scaling ${TIER} to ${REPLICAS} replicas..."
     kubectl scale deployment/"${TIER}" --replicas="${REPLICAS}" -n "${NAMESPACE}"
     kubectl rollout status deployment/"${TIER}" -n "${NAMESPACE}" --timeout=120s
@@ -56,7 +56,7 @@ case "${command}" in
       --node-pool="${POOL_NAME}" \
       --min-nodes="${MIN_COUNT}" \
       --max-nodes="${MAX_COUNT}" \
-      --region="${REGION}" \
+      --location="${CLUSTER_LOCATION}" \
       --project="${PROJECT_ID}"
     echo "Done."
     ;;

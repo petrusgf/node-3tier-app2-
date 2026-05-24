@@ -134,11 +134,14 @@ resource "google_cloud_scheduler_job" "db_backup" {
     http_method = "POST"
     uri         = "https://sqladmin.googleapis.com/sql/v1beta4/projects/${var.project_id}/instances/${module.cloud_sql.instance_name}/export"
 
+    # GCS versioning on the backup bucket retains every daily overwrite for 90 days.
+    # The fixed filename is intentional — versioning provides the retention history.
+    # For named recovery points, use scripts/backup.sh which includes a timestamp.
     body = base64encode(jsonencode({
       exportContext = {
         kind      = "sql#exportContext"
         fileType  = "SQL"
-        uri       = "gs://${module.cdn.backup_bucket_name}/sql-backups/${module.cloud_sql.instance_name}/backup.sql.gz"
+        uri       = "gs://${module.cdn.backup_bucket_name}/sql-backups/${module.cloud_sql.instance_name}/daily/backup.sql.gz"
         databases = [var.db_name]
       }
     }))

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Post-deployment health check — verifies both tiers respond correctly.
-# Called from GitLab CI after kubectl rollout status.
+# Called from Cloud Build after kubectl rollout status.
 
 set -euo pipefail
 
@@ -47,7 +47,7 @@ else
     echo "--- API pod status ---"
     kubectl get pods -n prod -l app=api
   fi
-  echo "NOTE: GKE load balancer can take 10-15 min to fully provision on first deploy."
-  echo "      Verify manually: curl http://web.aiforu2.com/health"
-  # Exit 0 — pods running is sufficient for deploy success
+  echo "NOTE: On first deploy, GKE load balancer can take 10-15 min to provision."
+  echo "      Verify manually: curl https://web.aiforu2.com/health"
+  exit 1
 fi
