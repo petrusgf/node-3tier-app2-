@@ -52,7 +52,7 @@ variable "gke_max_node_count" {
 variable "db_tier" {
   description = "Cloud SQL instance tier"
   type        = string
-  default     = "db-n1-standard-2"
+  default     = "db-custom-2-7680"
 }
 
 variable "db_name" {

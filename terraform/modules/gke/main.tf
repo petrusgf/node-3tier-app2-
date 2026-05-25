@@ -28,6 +28,7 @@ resource "google_container_cluster" "main" {
   location = local.cluster_location
   project  = var.project_id
 
+  deletion_protection      = false
   remove_default_node_pool = true
   initial_node_count       = 1
 
