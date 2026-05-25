@@ -87,8 +87,8 @@
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- cdn → cloudsql: backup bucket name -->
-    <mxCell id="dep_cdn_sql" value="backup bucket" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;fontSize=10;html=1;" edge="1" source="cdn" target="cloudsql" parent="1">
+    <!-- cdn → cloudsql: provides backup bucket name for IAM grant -->
+    <mxCell id="dep_cdn_sql" value="backup_bucket_name" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;fontSize=10;html=1;" edge="1" source="cloudsql" target="cdn" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
