@@ -1,0 +1,83 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <mxCell id="title" value="Zero-Downtime Deploys" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="600" height="35" as="geometry" />
+    </mxCell>
+
+    <!-- Phase labels -->
+    <mxCell id="lbl1" value="Before deploy" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="55" width="200" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="lbl2" value="During rolling update" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="400" y="55" width="220" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="lbl3" value="After deploy" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="760" y="55" width="200" height="25" as="geometry" />
+    </mxCell>
+
+    <!-- Before: 2 old pods -->
+    <mxCell id="b_pod1" value="Pod v1&lt;br&gt;Running ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="60" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="b_pod2" value="Pod v1&lt;br&gt;Running ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="170" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="b_lb" value="Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="85" y="195" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="be1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="b_lb" target="b_pod1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="be2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="b_lb" target="b_pod2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+    <!-- During: 1 old + 1 new, 1 terminating -->
+    <mxCell id="d_pod1" value="Pod v1&lt;br&gt;Running ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="370" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="d_pod2" value="Pod v2&lt;br&gt;Starting..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="475" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="d_pod3" value="Pod v1&lt;br&gt;Terminating" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="580" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="d_lb" value="Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="420" y="195" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="de1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="d_lb" target="d_pod1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="de2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="d_lb" target="d_pod2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+    <!-- PDB note -->
+    <mxCell id="pdb_note" value="PDB: maxUnavailable=0&lt;br&gt;always ≥1 pod serving traffic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="255" width="190" height="45" as="geometry" />
+    </mxCell>
+
+    <!-- After: 2 new pods -->
+    <mxCell id="a_pod1" value="Pod v2&lt;br&gt;Running ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="760" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="a_pod2" value="Pod v2&lt;br&gt;Running ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="870" y="100" width="90" height="55" as="geometry" />
+    </mxCell>
+    <mxCell id="a_lb" value="Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="785" y="195" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="ae1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="a_lb" target="a_pod1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="ae2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="a_lb" target="a_pod2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+    <!-- Phase arrows -->
+    <mxCell id="phase1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#666666;" edge="1" source="b_lb" target="d_lb" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="phase2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#666666;" edge="1" source="d_lb" target="a_lb" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+    <!-- HPA box -->
+    <mxCell id="hpa" value="&lt;b&gt;HPA&lt;/b&gt; — Horizontal Pod Autoscaler&lt;br&gt;scales web: 2→5 pods on CPU/mem&lt;br&gt;scales api: 2→5 pods on CPU/mem" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="250" y="340" width="500" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Rollback note -->
+    <mxCell id="rollback" value="On failure: kubectl rollout undo — reverts to previous image in seconds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="250" y="420" width="500" height="40" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>

@@ -1,0 +1,77 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <mxCell id="title" value="CD Pipeline — Cloud Build" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="600" height="35" as="geometry" />
+    </mxCell>
+
+    <!-- Trigger -->
+    <mxCell id="trigger" value="&lt;b&gt;Developer&lt;/b&gt;&lt;br&gt;git push origin main&lt;br&gt;(GitHub)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="30" y="80" width="150" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Cloud Build trigger -->
+    <mxCell id="cb_trigger" value="&lt;b&gt;Cloud Build&lt;/b&gt;&lt;br&gt;GitHub trigger fires&lt;br&gt;on push to main" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="230" y="80" width="165" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Build step label -->
+    <mxCell id="lbl_build" value="Step 1-2: Build" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="450" y="55" width="160" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Build web -->
+    <mxCell id="build_web" value="&lt;b&gt;docker build&lt;/b&gt;&lt;br&gt;web image&lt;br&gt;tagged $SHORT_SHA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="450" y="60" width="155" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Build api -->
+    <mxCell id="build_api" value="&lt;b&gt;docker build&lt;/b&gt;&lt;br&gt;api image&lt;br&gt;tagged $SHORT_SHA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="450" y="135" width="155" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Artifact Registry -->
+    <mxCell id="ar" value="&lt;b&gt;Artifact Registry&lt;/b&gt;&lt;br&gt;Step 3: docker push&lt;br&gt;web + api images" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="670" y="80" width="165" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Deploy step -->
+    <mxCell id="deploy" value="&lt;b&gt;kubectl apply&lt;/b&gt;&lt;br&gt;Step 4-5: namespaces,&lt;br&gt;deployments, services,&lt;br&gt;ingress, HPA, PDB,&lt;br&gt;NetworkPolicy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="895" y="60" width="165" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- Rollout status -->
+    <mxCell id="rollout" value="&lt;b&gt;kubectl rollout status&lt;/b&gt;&lt;br&gt;Step 6: waits for&lt;br&gt;web + api rollout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="895" y="200" width="165" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Health check -->
+    <mxCell id="health" value="&lt;b&gt;health-check.sh&lt;/b&gt;&lt;br&gt;Step 7: curl /health&lt;br&gt;web + api endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="670" y="200" width="165" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Success -->
+    <mxCell id="success" value="✓ Deploy complete&lt;br&gt;Image $SHORT_SHA live" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="430" y="205" width="165" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Arrows -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="trigger" target="cb_trigger" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e2" value="parallel" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="cb_trigger" target="build_web" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="cb_trigger" target="build_api" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="build_web" target="ar" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="build_api" target="ar" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="ar" target="deploy" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="deploy" target="rollout" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="rollout" target="health" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="health" target="success" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+    <!-- GKE note -->
+    <mxCell id="gke_note" value="GKE cluster: app-prod-cluster (us-central1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="850" y="170" width="260" height="20" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
