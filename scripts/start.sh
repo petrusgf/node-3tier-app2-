@@ -7,7 +7,7 @@ set -euo pipefail
 
 PROJECT_ID="${GCP_PROJECT_ID:-$(gcloud config get-value project)}"
 REGION="${GCP_REGION:-us-central1}"
-CLUSTER_LOCATION="${CLUSTER_LOCATION:-us-central1-a}"
+CLUSTER_LOCATION="${CLUSTER_LOCATION:-us-central1}"
 CLUSTER_NAME="${CLUSTER_NAME:-app-prod-cluster}"
 SQL_INSTANCE="${SQL_INSTANCE:-}"
 NAMESPACE="prod"

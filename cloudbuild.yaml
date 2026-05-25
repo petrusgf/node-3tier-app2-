@@ -1,6 +1,6 @@
 substitutions:
   _REGION: us-central1
-  _CLUSTER_LOCATION: us-central1-a
+  _CLUSTER_LOCATION: us-central1
   _CLUSTER: app-prod-cluster
   _REGISTRY: us-central1-docker.pkg.dev/${PROJECT_ID}/app-prod-app
   _WEB_DOMAIN: web.aiforu2.com
