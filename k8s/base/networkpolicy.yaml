@@ -35,7 +35,8 @@ spec:
             matchLabels:
               app: api
       ports:
-        - port: 80
+        - port: 80    # Service ClusterIP port
+        - port: 4000  # Actual pod port (post-DNAT, as seen by Calico)
     - ports:
         - port: 53
           protocol: UDP
