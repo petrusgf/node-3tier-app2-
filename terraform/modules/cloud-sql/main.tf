@@ -167,6 +167,6 @@ resource "google_storage_bucket_iam_member" "backup_sa_bucket_writer" {
 # Cloud SQL service agent writes the actual export file to GCS
 resource "google_storage_bucket_iam_member" "cloudsql_agent_bucket_writer" {
   bucket = var.backup_bucket_name
-  role   = "roles/storage.objectCreator"
+  role   = "roles/storage.objectAdmin"
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
