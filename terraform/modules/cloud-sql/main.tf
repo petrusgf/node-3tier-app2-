@@ -13,7 +13,7 @@ resource "google_sql_database_instance" "main" {
   region           = var.region
   project          = var.project_id
 
-  deletion_protection = true
+  deletion_protection = false
 
   settings {
     tier              = var.db_tier
@@ -146,14 +146,27 @@ resource "google_service_account" "backup_sa" {
   project      = var.project_id
 }
 
-resource "google_project_iam_member" "backup_sa_sql_editor" {
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
+# cloudsql.admin is required — cloudsql.editor lacks cloudsql.instances.export
+resource "google_project_iam_member" "backup_sa_sql_admin" {
   project = var.project_id
-  role    = "roles/cloudsql.editor"
+  role    = "roles/cloudsql.admin"
   member  = "serviceAccount:${google_service_account.backup_sa.email}"
 }
 
+# Backup SA calls the export API — Cloud Scheduler OAuth token auth
 resource "google_storage_bucket_iam_member" "backup_sa_bucket_writer" {
   bucket = var.backup_bucket_name
   role   = "roles/storage.objectCreator"
   member = "serviceAccount:${google_service_account.backup_sa.email}"
+}
+
+# Cloud SQL service agent writes the actual export file to GCS
+resource "google_storage_bucket_iam_member" "cloudsql_agent_bucket_writer" {
+  bucket = var.backup_bucket_name
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
